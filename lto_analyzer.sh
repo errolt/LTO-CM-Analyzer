@@ -176,18 +176,18 @@ show_usage_info () {
   show_field $1 0 2 "Page Id"
   show_field $1 2 2 "Page Length"
   show_field $1 4 8 "Drive Manufacturer" "ascii"
-  show_field $1 12 10 "Drive Id" "ascii"
-  show_field $1 22 2 "Suspended Writes at Append" "decimal"
-  show_field $1 24 4 "Thread Count" "decimal"
-  show_field $1 28 8 "Total Data Sets Written" "decimal"
-  show_field $1 36 8 "Total Data Sets Read" "decimal"
-  show_field $1 44 4 "Total Write Retries" "decimal"
-  show_field $1 48 4 "Total Read Retries" "decimal"
-  show_field $1 52 2 "Total Unrecovered Write Errors" "decimal"
-  show_field $1 54 2 "Total Unrecovered Read Errors" "decimal"
-  show_field $1 56 2 "Total Number of Suspended Writes" "decimal"
-  show_field $1 58 2 "Total Number of Fatal Suspended Writes" "decimal"
-  show_field $1 60 4 "CRC"
+  show_field $1 12 16 "Drive Id" "ascii"
+  show_field $1 28 2 "Suspended Writes at Append" "decimal"
+  show_field $1 32 4 "Thread Count" "decimal"
+  show_field $1 36 8 "Total Data Sets Written" "decimal"
+  show_field $1 44 8 "Total Data Sets Read" "decimal"
+  show_field $1 52 4 "Total Write Retries" "decimal"
+  show_field $1 56 4 "Total Read Retries" "decimal"
+  show_field $1 60 2 "Total Unrecovered Write Errors" "decimal"
+  show_field $1 62 2 "Total Unrecovered Read Errors" "decimal"
+  show_field $1 64 2 "Total Number of Suspended Writes" "decimal"
+  show_field $1 66 2 "Total Number of Fatal Suspended Writes" "decimal"
+  show_field $1 92 4 "CRC"
 }
 
 show_app_specific () {
@@ -262,6 +262,7 @@ do
   page_version=`echo $page_descriptor | cut -c 1`
   page_id=`echo $page_descriptor | cut -c 2-4`
   start_addr=`echo $page_descriptor | cut -c 5-8`
+  echo $page_version $page_id
 
   case "$page_id" in
     "101" ) init_data_addr=$start_addr;;
@@ -337,22 +338,42 @@ if [ "$sus_appd_wrt_addr" != "" ]; then
 fi
 
 if [ "$usage_info0_addr" != "" ]; then
-  usage_info=`calc_page_data $usage_info0_addr 64 $input`
+  usage_info=`calc_page_data $usage_info0_addr 96 $input`
   show_usage_info $usage_info 0
 fi
 
 if [ "$usage_info1_addr" != "" ]; then
-  usage_info=`calc_page_data $usage_info1_addr 64 $input`
+  usage_info=`calc_page_data $usage_info1_addr 96 $input`
   show_usage_info $usage_info 1
 fi 
 
 if [ "$usage_info2_addr" != "" ]; then
-  usage_info=`calc_page_data $usage_info2_addr 64 $input`
+  usage_info=`calc_page_data $usage_info2_addr 96 $input`
   show_usage_info $usage_info 2
 fi 
 
 if [ "$usage_info3_addr" != "" ]; then
-  usage_info=`calc_page_data $usage_info3_addr 64 $input`
+  usage_info=`calc_page_data $usage_info3_addr 96 $input`
+  show_usage_info $usage_info 3
+fi 
+
+if [ "$usage_info0b_addr" != "" ]; then
+  usage_info=`calc_page_data $usage_info0b_addr 128 $input`
+  show_usage_info $usage_info 0
+fi
+
+if [ "$usage_info1b_addr" != "" ]; then
+  usage_info=`calc_page_data $usage_info1b_addr 128 $input`
+  show_usage_info $usage_info 1
+fi 
+
+if [ "$usage_info2b_addr" != "" ]; then
+  usage_info=`calc_page_data $usage_info2b_addr 128 $input`
+  show_usage_info $usage_info 2
+fi 
+
+if [ "$usage_info3b_addr" != "" ]; then
+  usage_info=`calc_page_data $usage_info3b_addr 128 $input`
   show_usage_info $usage_info 3
 fi 
 
